@@ -150,7 +150,7 @@ window.FUNNEL_CONFIG = {
     footerTrack: 'Suivi de Commande',
     footerContact: 'Nous Contacter',
     footerContactTitle: 'Contactez-nous',
-    footerEmail: 'support@flexoryn.com',
+    footerEmail: 'contact@flexoryn.com',
     footerCopyright: '© 2026, Flexoryn'
   }
 };
