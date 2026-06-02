@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">SeverX — Chevillère Jeunesse | Flexoryn</title>
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --section-bg: #F7F8FA;
+      --text: #1A1A1A;
+      --text-muted: #555555;
+      --accent: #111111;
+      --cta: #111111;
+      --cta-hover: #333333;
+      --cta-text: #FFFFFF;
+      --star: #F5A623;
+      --border: #E5E5E5;
+      --urgency-bg: #FFF8E7;
+      --urgency-border: #F5A623;
+      --review-bg: #FFFFFF;
+      --header-bg: #FFFFFF;
+      --header-border: #F0F0F0;
+      --badge-bg: #111111;
+      --badge-text: #FFFFFF;
+      --font-headline: 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 20px;
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .brand-logo img {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+    .brand-logo-text {
+      font-family: var(--font-headline);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 18px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .header-cta:hover { opacity: 0.85; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cta);
+      color: var(--cta-text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+    .btn:hover { background: var(--cta-hover); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-large {
+      font-size: 17px;
+      padding: 18px 36px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* ── Stars ── */
+    .stars-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .stars-icons {
+      color: var(--star);
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+    .stars-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ── Hero Section ── */
+    .hero-section {
+      background: var(--bg);
+      padding: 0 0 48px;
+    }
+    .hero-image-wrap {
+      width: 100%;
+      margin-bottom: 32px;
+    }
+    .hero-image-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .hero-image-placeholder {
+      width: 100%;
+      min-height: 320px;
+      background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    }
+    .hero-text {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .hero-h1 {
+      font-family: var(--font-headline);
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    /* ── Image / Video slots ── */
+    .media-slot {
+      width: 100%;
+      display: block;
+    }
+    .media-slot img,
+    .media-slot video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .media-placeholder {
+      width: 100%;
+      min-height: 280px;
+      background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    }
+
+    /* ── Reason sections ── */
+    .reason-section {
+      padding: 0 0 56px;
+      background: var(--bg);
+    }
+    .reason-section:nth-child(odd) {
+      background: var(--section-bg);
+    }
+    .reason-media {
+      width: 100%;
+      margin-bottom: 32px;
+    }
+    .reason-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .reason-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+    .reason-title {
+      font-family: var(--font-headline);
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 800;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 18px;
+      letter-spacing: -0.3px;
+    }
+    .reason-body {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    .reason-bullets {
+      list-style: none;
+      margin: 14px 0 18px;
+    }
+    .reason-bullets li {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      padding-left: 22px;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .reason-bullets li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 900;
+    }
+    .reason-quote {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.7;
+      border-left: 3px solid var(--accent);
+      padding-left: 16px;
+      margin: 18px 0 8px;
+    }
+    .reason-quote-author {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .reason-result {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .reason-cta-wrap {
+      margin-top: 24px;
+    }
+
+    /* ── Urgency ── */
+    .urgency-section {
+      background: var(--urgency-bg);
+      border-top: 2px solid var(--urgency-border);
+      border-bottom: 2px solid var(--urgency-border);
+      padding: 44px 24px;
+      text-align: center;
+    }
+    .urgency-inner {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .urgency-badge {
+      display: inline-block;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+    .urgency-text {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+
+    /* ── Testimonials ── */
+    .testimonials-section {
+      background: var(--section-bg);
+      padding: 56px 24px;
+    }
+    .testimonials-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .testimonials-title {
+      font-family: var(--font-headline);
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 800;
+      color: var(--text);
+    }
+    .fb-screenshots-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .fb-screenshot {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+    }
+    .fb-screenshot img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── Final CTA ── */
+    .final-cta-section {
+      background: var(--bg);
+      padding: 64px 24px;
+    }
+    .final-cta-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .final-cta-title {
+      font-family: var(--font-headline);
+      font-size: clamp(24px, 3.5vw, 32px);
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 20px;
+      letter-spacing: -0.4px;
+    }
+    .final-cta-body {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+    .offer-box {
+      background: var(--section-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .offer-main {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .offer-note {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .how-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .steps-list {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+    .steps-list li {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      padding: 12px 0 12px 48px;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .steps-list li:last-child { border-bottom: none; }
+    .step-num {
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 30px;
+      height: 30px;
+      background: var(--accent);
+      color: var(--cta-text);
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pro-tip-box {
+      background: var(--urgency-bg);
+      border: 1px solid var(--urgency-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+    .final-urgency-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .final-cta-wrap { text-align: center; }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: var(--section-bg);
+      border-top: 1px solid var(--border);
+      padding: 48px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-col ul li a:hover { color: var(--text); }
+    .footer-contact-item { font-size: 14px; color: var(--text-muted); margin-bottom: 6px; }
+    .footer-bottom {
+      max-width: 960px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ── Responsive ── */
+    @media (min-width: 768px) {
+      .fb-screenshots-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .hero-section { padding-bottom: 56px; }
+      .reason-section { padding-bottom: 64px; }
+    }
+    @media (max-width: 600px) {
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+      .hero-text { padding: 0 16px; }
+      .reason-content { padding: 0 16px; }
+      .btn-large { font-size: 15px; padding: 16px 20px; }
+    }
+    @media (min-width: 601px) and (max-width: 767px) {
+      .fb-screenshots-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="https://flexoryn.com" class="brand-logo" id="brand-logo-link">
+        <img
+          src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/1_0a7b0532-05c3-49f0-97ad-2fa8799d767c.webp?v=1780222026"
+          id="brand-logo-img"
+          alt="Flexoryn"
+          onerror="this.style.display='none';document.getElementById('brand-logo-fallback').style.display='block';"
+        >
+        <span class="brand-logo-text" id="brand-logo-fallback" style="display:none;">Flexoryn</span>
+      </a>
+      <a href="#" class="header-cta" id="header-cta-link" data-cta="cta_header">
+        <span id="header-cta-text">Commander SeverX</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero-section">
+    <!-- Hero image ABOVE the stars -->
+    <div class="hero-image-wrap" id="hero-image-wrap">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/image_cb530df8-fe00-40f9-b90d-ef7f5454d4c3.webp?v=1780240672"
+        id="img-hero"
+        alt=""
+        loading="eager"
+      >
+    </div>
+
+    <div class="hero-text">
+      <div class="stars-row" style="justify-content:center;">
+        <span class="stars-icons">★★★★★</span>
+        <span class="stars-label" id="stars-label">1000+ avis 5 étoiles</span>
+      </div>
+      <h1 class="hero-h1" id="hero-h1">3 raisons pour lesquelles plus de 30 000 parents de jeunes footballeurs font confiance à SeverX pour les douleurs de talon de leur enfant</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Dites adieu aux boiteries, aux matchs manqués et aux galères liées à la maladie de Sever. SeverX offre une compression ciblée qui permet aux jeunes athlètes de guérir tout en continuant à jouer.</p>
+      <a href="#" class="btn btn-large" id="hero-cta-link" data-cta="cta_hero">
+        <span id="hero-cta-text">Voir les tailles disponibles</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── REASON 1 ── -->
+  <section class="reason-section" id="section-item1">
+    <div class="reason-media">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/gempages_577032515898835859-4591c96d-c586-4221-a2b7-22055c1a0eb8.jpg?v=1780409283"
+        id="img-item1"
+        alt=""
+        loading="lazy"
+        style="width:100%;height:auto;display:block;"
+      >
+    </div>
+    <div class="reason-content">
+      <p class="reason-label" id="item1-label">Raison n°1 :</p>
+      <h2 class="reason-title" id="item1-title">Une protection de la plaque de croissance pour qu'il reste dans le jeu</h2>
+      <p class="reason-body" id="item1-body1">SeverX n'est pas qu'un simple soulagement de la douleur — c'est une récupération active. Notre technologie de compression spécialement conçue pour les jeunes stabilise la plaque de croissance vulnérable du talon pendant le mouvement, réduisant l'inflammation pendant que votre enfant continue à pratiquer le sport qu'il aime.</p>
+      <p class="reason-body" id="item1-body2">Contrairement au repos seul (qui peut les mettre hors jeu pendant des mois), SeverX permet aux enfants de continuer à participer tout en guérissant naturellement. Plus besoin de choisir entre leurs rêves sportifs et leur santé.</p>
+      <div class="reason-cta-wrap">
+        <a href="#" class="btn" id="item1-cta-link" data-cta="cta_item1">
+          <span id="item1-cta-text">En savoir plus sur SeverX</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── REASON 2 ── -->
+  <section class="reason-section" id="section-item2">
+    <div class="reason-media">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/gempages_577032515898835859-ca9a1ba7-c719-4229-96fe-e52829cba5d5.png?v=1780409284"
+        id="img-item2"
+        alt=""
+        loading="lazy"
+        style="width:100%;height:auto;display:block;"
+      >
+    </div>
+    <div class="reason-content">
+      <p class="reason-label" id="item2-label">Raison n°2</p>
+      <h2 class="reason-title" id="item2-title">Compression médicale sans l'encombrement</h2>
+      <p class="reason-body" id="item2-intro">Lorsque vous comprimez correctement le talon, vous obtenez deux bénéfices puissants :</p>
+      <ul class="reason-bullets">
+        <li id="item2-bullet1">Une meilleure circulation qui accélère la guérison et réduit les gonflements</li>
+        <li id="item2-bullet2">Un soutien amorti qui absorbe les chocs à chaque saut, course et pivot</li>
+      </ul>
+      <p class="reason-body" id="item2-body">Mais voici ce qui différencie SeverX : il offre cette protection dans un design discret qui s'intègre parfaitement dans les crampons et les chaussures de sport. Aucun encombrement gênant, aucun glissement, aucune plainte de votre enfant.</p>
+      <div class="reason-cta-wrap">
+        <a href="#" class="btn" id="item2-cta-link" data-cta="cta_item2">
+          <span id="item2-cta-text">Voir les tailles disponibles</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── REASON 3 ── -->
+  <section class="reason-section" id="section-item3">
+    <div class="reason-media">
+      <video
+        id="video-item3"
+        autoplay
+        muted
+        loop
+        playsinline
+        style="width:100%;height:auto;display:block;"
+      >
+        <source src="https://cdn.shopify.com/videos/c/o/v/c0dfae25f0bb4fa4a1b6c543aede5f0f.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="reason-content">
+      <p class="reason-label" id="item3-label">Raison n°3</p>
+      <h2 class="reason-title" id="item3-title">Si confortable, votre enfant oublie qu'il la porte</h2>
+      <p class="reason-body" id="item3-body1">Soyons honnêtes — si votre enfant ne veut pas la porter, peu importe à quel point elle fonctionne bien.</p>
+      <p class="reason-body" id="item3-body2">C'est pourquoi SeverX est fabriqué avec un tissu sportif respirant, des sangles de soutien réglables et une compression adaptée aux pieds en croissance (et non une simple version adulte réduite).</p>
+      <p class="reason-result" id="item3-result">Le résultat ?</p>
+      <p class="reason-body" id="item3-body3">Les enfants veulent vraiment la garder — pendant l'entraînement, les matchs, même à l'école.</p>
+      <blockquote class="reason-quote" id="item3-quote">« Mon fils refuse de l'enlever. Il dit que ça lui donne l'impression d'aller plus vite. »</blockquote>
+      <p class="reason-quote-author" id="item3-quote-author">— Un papa de notre communauté</p>
+      <div class="reason-cta-wrap">
+        <a href="#" class="btn" id="item3-cta-link" data-cta="cta_item3">
+          <span id="item3-cta-text">Commander SeverX Aujourd'hui</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── URGENCY ── -->
+  <section class="urgency-section">
+    <div class="urgency-inner">
+      <span class="urgency-badge" id="urgency-badge">Offre Limitée</span>
+      <p class="urgency-text" id="urgency-text">SeverX cartonne chez les parents de jeunes sportifs — et nos tailles jeunesse se vendent à toute vitesse en pleine saison. Ne laissez pas votre enfant manquer encore un match.</p>
+      <a href="#" class="btn btn-large" id="urgency-cta-link" data-cta="cta_urgency">
+        <span id="urgency-cta-text">Profiter de -50% sur SeverX</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+  <section class="testimonials-section">
+    <div class="testimonials-inner">
+      <div class="testimonials-header">
+        <h2 class="testimonials-title" id="testimonials-title">De vrais résultats</h2>
+      </div>
+      <div class="fb-screenshots-grid" id="fb-screenshots">
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_221803_abeb3c7f-420c-45f4-be30-ef6e36e148bc.png?v=1780393215" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_220603_16d3f89f-9cfb-4bbb-af67-37b77a46fc24.png?v=1780393215" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_205643_da28d26a-1f91-4e3a-8f37-41bf720609d3.png?v=1780393215" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260602_091432_6bf789a8-e541-47ad-a353-a27dd41e0e83.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_214941_cc79d7ef-5a0d-497e-8bcc-c179d9511a29.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_212625_5dd445ec-f64f-4db8-9763-b346c1d302a1.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260602_092657_fdb7bc2b-9359-473b-837d-e5721a5aa5bb.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_212828_ac1a7e1c-0c00-4f6c-8451-769d53fefcea.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_215800_dc935168-f310-4f2e-83d8-60cba3b88e7f.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+        <div class="fb-screenshot">
+          <img src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/hf_20260601_212045_a8059146-23a2-4d46-914c-3dba4e2616a7.png?v=1780393214" alt="Avis client" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ── -->
+  <section class="final-cta-section">
+    <div class="final-cta-inner">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0696/4251/8616/files/image_3.webp?v=1780241942"
+        alt=""
+        loading="lazy"
+        style="width:100%;height:auto;display:block;border-radius:10px;margin-bottom:32px;"
+      >
+      <h2 class="final-cta-title" id="final-cta-title">N'attendez pas qu'il doive tout arrêter</h2>
+      <p class="final-cta-body" id="final-cta-body">La douleur au talon chez les jeunes athlètes n'est pas juste « de la croissance ». Non traitée, la maladie de Sever peut entraîner des blessures compensatoires, une perte de confiance et des mois sur le banc de touche. C'est pourquoi des <strong>milliers de parents de sportifs</strong> choisissent la <strong>Chevillère SeverX</strong> — conçue pour soutenir, protéger et accélérer la guérison des enfants actifs.</p>
+
+      <div class="offer-box">
+        <div class="offer-main" id="final-cta-offer">Offre limitée : -50% + Livraison offerte</div>
+        <div class="offer-note" id="final-cta-offer-note">Disponible uniquement sur le site officiel Flexoryn.</div>
+      </div>
+
+      <p class="how-title" id="final-cta-how-title">Comment commencer :</p>
+      <ol class="steps-list">
+        <li>
+          <span class="step-num">1</span>
+          <span id="final-cta-step1"><strong>Commandez aujourd'hui</strong> pour obtenir votre réduction (les tailles jeunesse partent vite)</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span id="final-cta-step2"><strong>Faites-lui porter SeverX tous les jours</strong> — au sport, à l'école, dès qu'il est actif</span>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <span id="final-cta-step3"><strong>Observez la transformation</strong> — moins de boiterie, plus de confiance, retour à 100%</span>
+        </li>
+      </ol>
+
+      <div class="pro-tip-box" id="final-cta-pro-tip">
+        <strong>Conseil Pro :</strong> De nombreux parents commandent 2 paires pour que leur enfant puisse alterner — une à l'entraînement, une au lavage.
+      </div>
+
+      <p class="final-urgency-text" id="final-cta-urgency">La saison est courte. Ne laissez pas la douleur la lui voler.</p>
+
+      <div class="final-cta-wrap">
+        <a href="#" class="btn btn-large" id="final-cta-button-link" data-cta="cta_final">
+          <span id="final-cta-button-text">Passer à SeverX Maintenant</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner" style="grid-template-columns:1fr;">
+      <div class="footer-col">
+        <p class="footer-col-title" id="footer-contact-title">Contactez-nous</p>
+        <p class="footer-contact-item" id="footer-email">contact@flexoryn.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footer-copyright">© 2026, Flexoryn</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="tracker.js"></script>
+  <script>
+    function deepMerge(base, override) {
+      var result = Object.assign({}, base);
+      for (var key in override) {
+        if (override.hasOwnProperty(key)) {
+          if (override[key] && typeof override[key] === 'object' && !Array.isArray(override[key]) &&
+              base[key] && typeof base[key] === 'object') {
+            result[key] = deepMerge(base[key], override[key]);
+          } else if (override[key] !== null && override[key] !== undefined && override[key] !== '') {
+            result[key] = override[key];
+          }
+        }
+      }
+      return result;
+    }
+
+    function applyConfig(cfg) {
+      // Colors
+      Object.keys(cfg.colors || {}).forEach(function(k) {
+        document.documentElement.style.setProperty(k, cfg.colors[k]);
+      });
+
+      // Fonts
+      if (cfg.fonts) {
+        var hl = cfg.fonts.headline || 'Inter';
+        var bd = cfg.fonts.body || 'Inter';
+        document.documentElement.style.setProperty('--font-headline', "'" + hl + "', sans-serif");
+        document.documentElement.style.setProperty('--font-body', "'" + bd + "', sans-serif");
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=' + hl.replace(/ /g,'+') + ':wght@400;600;700;800&family=' + bd.replace(/ /g,'+') + ':wght@400;600;700;800&display=swap';
+        document.head.appendChild(link);
+      }
+
+      // Override hero image if config provides one
+      if (cfg.images && cfg.images.hero) {
+        var heroImg = document.getElementById('img-hero');
+        if (heroImg) heroImg.src = cfg.images.hero;
+      }
+      if (cfg.images && cfg.images.item1) {
+        var i1 = document.getElementById('img-item1');
+        if (i1) i1.src = cfg.images.item1;
+      }
+      if (cfg.images && cfg.images.item2) {
+        var i2 = document.getElementById('img-item2');
+        if (i2) i2.src = cfg.images.item2;
+      }
+      if (cfg.images && cfg.images.item3video) {
+        var v3 = document.getElementById('video-item3');
+        if (v3) { v3.querySelector('source').src = cfg.images.item3video; v3.load(); }
+      }
+
+      // Texts
+      var t = cfg.texts || {};
+      var textMap = {
+        'stars-label': t.starsLabel,
+        'hero-h1': t.h1,
+        'hero-subtitle': t.heroSubtitle,
+        'hero-cta-text': t.heroCta,
+        'header-cta-text': t.headerCta,
+        'item1-label': t.item1Label,
+        'item1-title': t.item1Title,
+        'item1-body1': t.item1Body1,
+        'item1-body2': t.item1Body2,
+        'item1-cta-text': t.item1Cta,
+        'item2-label': t.item2Label,
+        'item2-title': t.item2Title,
+        'item2-intro': t.item2Intro,
+        'item2-bullet1': t.item2Bullet1,
+        'item2-bullet2': t.item2Bullet2,
+        'item2-body': t.item2Body,
+        'item2-cta-text': t.item2Cta,
+        'item3-label': t.item3Label,
+        'item3-title': t.item3Title,
+        'item3-body1': t.item3Body1,
+        'item3-body2': t.item3Body2,
+        'item3-result': t.item3Result,
+        'item3-body3': t.item3Body3,
+        'item3-quote': t.item3Quote,
+        'item3-quote-author': t.item3QuoteAuthor,
+        'item3-cta-text': t.item3Cta,
+        'urgency-badge': t.urgencyBadge,
+        'urgency-text': t.urgencyText,
+        'urgency-cta-text': t.urgencyCta,
+        'testimonials-title': t.testimonialsTitle,
+        'final-cta-title': t.finalCtaTitle,
+        'final-cta-offer': t.finalCtaOffer,
+        'final-cta-offer-note': t.finalCtaOfferNote,
+        'final-cta-how-title': t.finalCtaHowTitle,
+        'final-cta-urgency': t.finalCtaUrgency,
+        'final-cta-button-text': t.finalCtaButton,
+        'footer-policies-title': t.footerPoliciesTitle,
+        'footer-terms': t.footerTerms,
+        'footer-privacy': t.footerPrivacy,
+        'footer-refund': t.footerRefund,
+        'footer-shipping': t.footerShipping,
+        'footer-care-title': t.footerCareTitle,
+        'footer-about': t.footerAbout,
+        'footer-track': t.footerTrack,
+        'footer-contact': t.footerContact,
+        'footer-contact-title': t.footerContactTitle,
+        'footer-email': t.footerEmail,
+        'footer-copyright': t.footerCopyright
+      };
+      Object.keys(textMap).forEach(function(id) {
+        var val = textMap[id];
+        if (!val) return;
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (/<[a-z]/i.test(val)) el.innerHTML = val;
+        else el.textContent = val;
+      });
+
+      // HTML fields
+      var htmlFields = {
+        'final-cta-body': t.finalCtaBody,
+        'final-cta-step1': t.finalCtaStep1,
+        'final-cta-step2': t.finalCtaStep2,
+        'final-cta-step3': t.finalCtaStep3,
+        'final-cta-pro-tip': t.finalCtaProTip
+      };
+      Object.keys(htmlFields).forEach(function(id) {
+        var val = htmlFields[id];
+        if (!val) return;
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = val;
+      });
+
+      // CTA URLs
+      var ctaUrl = cfg.ctaUrl || '#';
+      document.querySelectorAll('[data-cta]').forEach(function(el) { el.href = ctaUrl; });
+
+      // Logo override
+      if (cfg.logoUrl) {
+        var logoImg = document.getElementById('brand-logo-img');
+        if (logoImg) logoImg.src = cfg.logoUrl;
+      }
+
+      applyItemVisibility(cfg);
+    }
+
+    var ITEM_COUNT = 3;
+    function applyItemVisibility(cfg) {
+      var enabled = cfg.itemsEnabled || {};
+      var visibleCount = 0;
+      for (var i = 1; i <= ITEM_COUNT; i++) {
+        var key = 'item' + i;
+        var section = document.getElementById('section-' + key);
+        if (!section) continue;
+        if (enabled[key] === false) {
+          section.style.display = 'none';
+        } else {
+          section.style.display = '';
+          var badge = section.querySelector('.reason-label');
+          if (badge) {
+            badge.textContent = badge.textContent.replace(/\d+/, visibleCount + 1);
+          }
+          visibleCount++;
+        }
+      }
+    }
+
+    function initConfigLoad() {
+      var CFG = window.FUNNEL_CONFIG;
+      if (CFG.supabaseUrl && CFG.supabaseAnonKey) {
+        var sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+        sb.from('funnel_config').select('config').eq('funnel_id', CFG.funnelId).single()
+          .then(function(res) {
+            applyConfig(res.data && res.data.config ? deepMerge(CFG, res.data.config) : CFG);
+          })
+          .catch(function() { applyConfig(CFG); });
+      } else {
+        applyConfig(CFG);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initConfigLoad);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Flexoryn SeverX</title>
+  <style>
+    :root {
+      --accent: #111111;
+      --accent-light: #f0f0f0;
+      --bg: #F4F5F7;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --muted: #666666;
+      --border: #E5E5E5;
+      --success: #22C55E;
+      --error: #EF4444;
+      --warn: #F5A623;
+      --radius: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+    /* ── Login ── */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+    .login-card {
+      background: var(--card); border-radius: var(--radius); padding: 40px;
+      width: 100%; max-width: 380px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .login-logo { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .login-sub { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+    .form-group input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus { border-color: var(--accent); }
+    .btn-login { width: 100%; padding: 12px; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s; }
+    .btn-login:hover { opacity: 0.85; }
+    .login-error { color: var(--error); font-size: 13px; margin-top: 10px; display: none; }
+
+    /* ── Main layout ── */
+    #admin-app { display: none; }
+    .admin-header {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 0 24px; position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .admin-brand { font-weight: 800; font-size: 16px; }
+    .admin-brand span { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 8px; }
+    .admin-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-view { padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--muted); background: #fff; cursor: pointer; text-decoration: none; }
+    .btn-logout { padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--error); background: #fff; cursor: pointer; }
+
+    .admin-body { display: flex; min-height: calc(100vh - 56px); }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 220px; flex-shrink: 0; background: var(--card);
+      border-right: 1px solid var(--border); padding: 16px 12px;
+    }
+    .sidebar-section { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 8px 10px 4px; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 10px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--text);
+      transition: background 0.15s; user-select: none;
+    }
+    .sidebar-item:hover { background: var(--accent-light); }
+    .sidebar-item.active { background: var(--accent); color: #fff; }
+    .sidebar-icon { width: 18px; text-align: center; font-size: 14px; }
+
+    /* ── Content ── */
+    .admin-content { flex: 1; padding: 24px; overflow-y: auto; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .panel-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .panel-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+
+    /* ── Cards ── */
+    .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; margin-bottom: 16px; }
+    .card-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 14px; }
+
+    /* ── KPI row ── */
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+    .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+    .kpi-value { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1; }
+    .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Date filter ── */
+    .date-filter { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .date-btn {
+      padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 12px; font-weight: 700; cursor: pointer; background: #fff; color: var(--muted);
+      transition: all 0.15s;
+    }
+    .date-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .date-range-inputs { display: flex; gap: 6px; align-items: center; }
+    .date-range-inputs input[type="date"] { padding: 6px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 12px; }
+    .date-range-inputs button { padding: 6px 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    #custom-range { display: none; }
+
+    /* ── Funnel bars ── */
+    .funnel-bar-row { margin-bottom: 12px; }
+    .funnel-bar-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .funnel-bar-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .funnel-bar-stats { font-size: 12px; color: var(--muted); }
+    .funnel-bar-track { background: #f0f0f0; border-radius: 6px; height: 12px; overflow: hidden; }
+    .funnel-bar-fill { height: 100%; border-radius: 6px; background: var(--accent); transition: width 0.4s ease; }
+    .funnel-bar-dropoff { font-size: 11px; color: var(--error); font-weight: 600; margin-top: 2px; }
+
+    /* ── Hourly chart ── */
+    .hourly-chart { width: 100%; height: 140px; position: relative; overflow: hidden; }
+    .hourly-bars { display: flex; align-items: flex-end; gap: 3px; height: 110px; padding: 0 4px; }
+    .hour-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .hour-bar { width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; transition: height 0.3s; opacity: 0.8; }
+    .hour-label { font-size: 9px; color: var(--muted); }
+
+    /* ── Form fields ── */
+    .field-group { margin-bottom: 18px; }
+    .field-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; display: block; }
+    .field-input {
+      width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .field-input:focus { border-color: var(--accent); }
+    .field-textarea { min-height: 72px; resize: vertical; }
+    .field-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Color fields ── */
+    .color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .color-field { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; }
+    .color-picker-wrap { position: relative; }
+    .color-picker-wrap input[type="color"] { width: 36px; height: 36px; border: none; padding: 0; border-radius: 6px; cursor: pointer; background: transparent; }
+    .color-info { flex: 1; min-width: 0; }
+    .color-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .color-hex-input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: monospace; outline: none; }
+
+    /* ── Image fields ── */
+    .image-field { padding: 14px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; margin-bottom: 12px; }
+    .image-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .image-field-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .image-preview { width: 64px; height: 48px; border-radius: 6px; object-fit: cover; display: none; border: 1px solid var(--border); }
+
+    /* ── Toggle cards ── */
+    .items-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    .items-bulk { display: flex; gap: 6px; }
+    .items-bulk button { padding: 7px 14px; background: #fff; border: 1.5px solid var(--border); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--muted); cursor: pointer; }
+    .item-card { background: #fff; border-radius: var(--radius); padding: 14px 18px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.05); display: flex; align-items: center; gap: 14px; transition: opacity .2s; border: 1px solid var(--border); }
+    .item-card.disabled { opacity: 0.42; }
+    .item-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .item-info { flex: 1; min-width: 0; }
+    .item-title-preview { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .toggle-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+    .toggle-label { font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: .5px; }
+    .toggle { position: relative; display: inline-block; width: 42px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #e0e0e0; border-radius: 24px; transition: .2s; }
+    .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; left: 3px; top: 3px; background: #fff; transition: .2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .toggle input:checked + .toggle-slider { background: var(--accent); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+
+    /* ── Save bar ── */
+    .save-bar {
+      position: fixed; bottom: 0; left: 220px; right: 0;
+      background: var(--card); border-top: 1px solid var(--border);
+      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+      z-index: 40;
+    }
+    .save-status { font-size: 13px; color: var(--muted); }
+    .save-status.success { color: var(--success); }
+    .save-status.error { color: var(--error); }
+    .btn-save {
+      padding: 10px 28px; background: var(--accent); color: #fff;
+      font-size: 14px; font-weight: 700; border: none; border-radius: 8px;
+      cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .btn-save:hover { opacity: 0.85; }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+    .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .content-pad { padding-bottom: 80px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .save-bar { left: 0; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .color-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Flexoryn</div>
+    <div class="login-sub">Panel d'administration — SeverX</div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Se connecter</button>
+    <div class="login-error" id="login-error">Mot de passe incorrect.</div>
+  </div>
+</div>
+
+<!-- ── ADMIN APP ── -->
+<div id="admin-app">
+
+  <header class="admin-header">
+    <div class="admin-brand">Flexoryn Admin <span>SeverX — Advertorial</span></div>
+    <div class="admin-actions">
+      <a href="index.html" target="_blank" class="btn-view">👁 Voir la page</a>
+      <button class="btn-logout" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-section">Analytique</div>
+      <div class="sidebar-item active" onclick="switchTab('dashboard')">
+        <span class="sidebar-icon">📊</span> Dashboard
+      </div>
+      <div class="sidebar-section" style="margin-top:12px;">Contenu</div>
+      <div class="sidebar-item" onclick="switchTab('items')">
+        <span class="sidebar-icon">🔢</span> Items actifs
+      </div>
+      <div class="sidebar-item" onclick="switchTab('textes')">
+        <span class="sidebar-icon">✏️</span> Textes
+      </div>
+      <div class="sidebar-item" onclick="switchTab('images')">
+        <span class="sidebar-icon">🖼</span> Images
+      </div>
+      <div class="sidebar-section" style="margin-top:12px;">Design</div>
+      <div class="sidebar-item" onclick="switchTab('couleurs')">
+        <span class="sidebar-icon">🎨</span> Couleurs
+      </div>
+      <div class="sidebar-item" onclick="switchTab('typo')">
+        <span class="sidebar-icon">🔤</span> Typographie
+      </div>
+      <div class="sidebar-section" style="margin-top:12px;">Config</div>
+      <div class="sidebar-item" onclick="switchTab('cta')">
+        <span class="sidebar-icon">🔗</span> Lien CTA
+      </div>
+      <div class="sidebar-item" onclick="switchTab('tracking')">
+        <span class="sidebar-icon">📡</span> Tracking
+      </div>
+      <div class="sidebar-item" onclick="switchTab('settings')">
+        <span class="sidebar-icon">⚙️</span> Réglages
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="admin-content content-pad">
+
+      <!-- ── DASHBOARD ── -->
+      <div id="tab-dashboard" class="tab-panel active">
+        <div class="panel-title">Dashboard</div>
+        <div class="panel-sub">Analytics en temps réel de votre funnel SeverX</div>
+
+        <div class="date-filter">
+          <button class="date-btn active" onclick="setDateFilter('today', this)">Aujourd'hui</button>
+          <button class="date-btn" onclick="setDateFilter('7d', this)">7 jours</button>
+          <button class="date-btn" onclick="setDateFilter('30d', this)">30 jours</button>
+          <button class="date-btn" onclick="setDateFilter('custom', this)">Période</button>
+          <div id="custom-range" class="date-range-inputs">
+            <input type="date" id="date-from">
+            <span>→</span>
+            <input type="date" id="date-to">
+            <button onclick="applyCustomRange()">Appliquer</button>
+          </div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-label">Visiteurs</div>
+            <div class="kpi-value" id="kpi-visitors">—</div>
+            <div class="kpi-sub" id="kpi-visitors-sub">vues de page</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Taux conversion</div>
+            <div class="kpi-value" id="kpi-cvr">—</div>
+            <div class="kpi-sub">clics CTA / visiteurs</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Scroll moyen</div>
+            <div class="kpi-value" id="kpi-scroll">—</div>
+            <div class="kpi-sub">profondeur moyenne</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Clics CTA</div>
+            <div class="kpi-value" id="kpi-cta-clicks">—</div>
+            <div class="kpi-sub" id="kpi-cta-sub">total</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Funnel de conversion</div>
+          <div id="funnel-bars">
+            <div style="color:var(--muted);font-size:13px;padding:12px 0;">Chargement…</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Trafic par heure</div>
+          <div class="hourly-chart" id="hourly-chart">
+            <div style="color:var(--muted);font-size:13px;">Chargement…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ITEMS ACTIFS ── -->
+      <div id="tab-items" class="tab-panel">
+        <div class="panel-title">Items actifs</div>
+        <div class="panel-sub">Activez ou désactivez chaque raison individuellement</div>
+        <div class="items-toolbar">
+          <span id="items-count-label">— actifs</span>
+          <div class="items-bulk">
+            <button onclick="toggleAllItems(true)">Tout activer</button>
+            <button onclick="toggleAllItems(false)">Tout désactiver</button>
+          </div>
+        </div>
+        <div id="items-cards"></div>
+      </div>
+
+      <!-- ── TEXTES ── -->
+      <div id="tab-textes" class="tab-panel">
+        <div class="panel-title">Textes</div>
+        <div class="panel-sub">Modifiez chaque texte visible sur la page</div>
+        <div id="textes-fields"></div>
+      </div>
+
+      <!-- ── IMAGES ── -->
+      <div id="tab-images" class="tab-panel">
+        <div class="panel-title">Images</div>
+        <div class="panel-sub">Renseignez les URLs de vos images</div>
+        <div id="images-fields"></div>
+      </div>
+
+      <!-- ── COULEURS ── -->
+      <div id="tab-couleurs" class="tab-panel">
+        <div class="panel-title">Couleurs</div>
+        <div class="panel-sub">Personnalisez la palette de couleurs</div>
+        <div class="color-grid" id="color-fields"></div>
+      </div>
+
+      <!-- ── TYPO ── -->
+      <div id="tab-typo" class="tab-panel">
+        <div class="panel-title">Typographie</div>
+        <div class="panel-sub">Noms exacts de polices Google Fonts</div>
+        <div class="card">
+          <div class="field-group">
+            <label class="field-label">Police Titres (Headline)</label>
+            <input class="field-input" id="cfg-font-headline" value="Inter" placeholder="ex: Playfair Display">
+            <div class="field-hint">Doit correspondre au nom exact sur fonts.google.com</div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Police Corps (Body)</label>
+            <input class="field-input" id="cfg-font-body" value="Inter" placeholder="ex: Inter">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CTA ── -->
+      <div id="tab-cta" class="tab-panel">
+        <div class="panel-title">Lien CTA</div>
+        <div class="panel-sub">URL de destination de tous les boutons d'achat</div>
+        <div class="card">
+          <div class="field-group">
+            <label class="field-label">URL CTA Principal</label>
+            <input class="field-input" id="cfg-ctaUrl" type="url" placeholder="https://flexoryn.com/products/severx">
+            <div class="field-hint">Tous les boutons de la page pointent vers cette URL</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TRACKING ── -->
+      <div id="tab-tracking" class="tab-panel">
+        <div class="panel-title">Tracking</div>
+        <div class="panel-sub">Pixels et analytics</div>
+        <div class="card">
+          <div class="field-group">
+            <label class="field-label">Meta Pixel ID</label>
+            <input class="field-input" id="cfg-metaPixelId" placeholder="ex: 1234567890123">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Google Analytics ID (GA4)</label>
+            <input class="field-input" id="cfg-gaId" placeholder="ex: G-XXXXXXXXXX">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RÉGLAGES ── -->
+      <div id="tab-settings" class="tab-panel">
+        <div class="panel-title">Réglages</div>
+        <div class="panel-sub">Configuration Supabase et sécurité</div>
+        <div class="card">
+          <div class="field-group">
+            <label class="field-label">Supabase URL</label>
+            <input class="field-input" id="cfg-supabaseUrl" type="url" placeholder="https://xxxx.supabase.co">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Supabase Anon Key</label>
+            <input class="field-input" id="cfg-supabaseAnonKey" placeholder="eyJhbGciOiJIUzI1...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Mot de passe Admin</label>
+            <input class="field-input" id="cfg-adminPassword" type="password" placeholder="••••••••">
+            <div class="field-hint">Laissez vide pour conserver le mot de passe actuel</div>
+          </div>
+        </div>
+
+        <div class="card" style="background:#fffbeb;border-color:#f5a623;">
+          <div class="card-title" style="color:#92400e;">📋 Schema SQL Supabase</div>
+          <p style="font-size:13px;color:#78350f;margin-bottom:10px;">Exécutez ce SQL dans votre projet Supabase pour créer les tables nécessaires :</p>
+          <pre style="background:#1e1e1e;color:#d4d4d4;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">
+CREATE TABLE IF NOT EXISTS funnel_config (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  funnel_id text UNIQUE NOT NULL,
+  config jsonb NOT NULL DEFAULT '{}',
+  updated_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS funnel_events (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  funnel_id text NOT NULL,
+  visitor_id text NOT NULL,
+  event_type text NOT NULL,
+  event_data jsonb DEFAULT '{}',
+  page_url text,
+  user_agent text,
+  referrer text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_events_funnel_created
+  ON funnel_events(funnel_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_events_type
+  ON funnel_events(event_type);</pre>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── SAVE BAR ── -->
+  <div class="save-bar">
+    <span class="save-status" id="save-status">Modifications non sauvegardées</span>
+    <button class="btn-save" id="save-btn" onclick="saveConfig()">💾 Sauvegarder</button>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+var CFG = JSON.parse(JSON.stringify(window.FUNNEL_CONFIG));
+var supabaseClient = null;
+var ITEM_COUNT = 3;
+var currentDateFilter = 'today';
+var customFrom = null, customTo = null;
+
+// ─── Text definitions ─────────────────────────────────────
+var TEXT_DEFS = [
+  {key:'headerCta', label:'Bouton header', type:'text'},
+  {key:'starsLabel', label:'Label étoiles (hero)', type:'text'},
+  {key:'h1', label:'H1 Principal', type:'textarea'},
+  {key:'heroSubtitle', label:'Sous-titre hero', type:'textarea'},
+  {key:'heroCta', label:'CTA Hero', type:'text'},
+  {key:'item1Label', label:'Label Raison 1', type:'text'},
+  {key:'item1Title', label:'Titre Raison 1', type:'textarea'},
+  {key:'item1Body1', label:'Corps Raison 1 — Para 1', type:'textarea'},
+  {key:'item1Body2', label:'Corps Raison 1 — Para 2', type:'textarea'},
+  {key:'item1Cta', label:'CTA Raison 1', type:'text'},
+  {key:'item2Label', label:'Label Raison 2', type:'text'},
+  {key:'item2Title', label:'Titre Raison 2', type:'textarea'},
+  {key:'item2Intro', label:'Intro Raison 2', type:'text'},
+  {key:'item2Bullet1', label:'Bullet 1 — Raison 2', type:'text'},
+  {key:'item2Bullet2', label:'Bullet 2 — Raison 2', type:'text'},
+  {key:'item2Body', label:'Corps Raison 2', type:'textarea'},
+  {key:'item2Cta', label:'CTA Raison 2', type:'text'},
+  {key:'item3Label', label:'Label Raison 3', type:'text'},
+  {key:'item3Title', label:'Titre Raison 3', type:'textarea'},
+  {key:'item3Body1', label:'Corps Raison 3 — Para 1', type:'text'},
+  {key:'item3Body2', label:'Corps Raison 3 — Para 2', type:'textarea'},
+  {key:'item3Result', label:'Résultat (Raison 3)', type:'text'},
+  {key:'item3Body3', label:'Corps Raison 3 — Para 3', type:'text'},
+  {key:'item3Quote', label:'Citation client', type:'textarea'},
+  {key:'item3QuoteAuthor', label:'Auteur citation', type:'text'},
+  {key:'item3Cta', label:'CTA Raison 3', type:'text'},
+  {key:'urgencyBadge', label:'Badge offre limitée', type:'text'},
+  {key:'urgencyText', label:'Texte urgence', type:'textarea'},
+  {key:'urgencyCta', label:'CTA Urgence', type:'text'},
+  {key:'testimonialsCount', label:'Compteur avis', type:'text'},
+  {key:'testimonialsTitle', label:'Titre avis', type:'text'},
+  {key:'testimonialsSubtitle', label:'Sous-titre avis', type:'text'},
+  {key:'review1Name', label:'Avis 1 — Nom', type:'text'},
+  {key:'review1Role', label:'Avis 1 — Rôle', type:'text'},
+  {key:'review1Text', label:'Avis 1 — Texte', type:'textarea'},
+  {key:'review2Name', label:'Avis 2 — Nom', type:'text'},
+  {key:'review2Role', label:'Avis 2 — Rôle', type:'text'},
+  {key:'review2Text', label:'Avis 2 — Texte', type:'textarea'},
+  {key:'review3Name', label:'Avis 3 — Nom', type:'text'},
+  {key:'review3Role', label:'Avis 3 — Rôle', type:'text'},
+  {key:'review3Text', label:'Avis 3 — Texte', type:'textarea'},
+  {key:'review4Name', label:'Avis 4 — Nom', type:'text'},
+  {key:'review4Role', label:'Avis 4 — Rôle', type:'text'},
+  {key:'review4Text', label:'Avis 4 — Texte', type:'textarea'},
+  {key:'review5Name', label:'Avis 5 — Nom', type:'text'},
+  {key:'review5Role', label:'Avis 5 — Rôle', type:'text'},
+  {key:'review5Text', label:'Avis 5 — Texte', type:'textarea'},
+  {key:'review6Name', label:'Avis 6 — Nom', type:'text'},
+  {key:'review6Role', label:'Avis 6 — Rôle', type:'text'},
+  {key:'review6Text', label:'Avis 6 — Texte', type:'textarea'},
+  {key:'finalCtaTitle', label:'CTA Final — Titre', type:'textarea'},
+  {key:'finalCtaBody', label:'CTA Final — Corps', type:'textarea'},
+  {key:'finalCtaOffer', label:'CTA Final — Offre', type:'text'},
+  {key:'finalCtaOfferNote', label:'CTA Final — Note offre', type:'text'},
+  {key:'finalCtaHowTitle', label:'CTA Final — Titre étapes', type:'text'},
+  {key:'finalCtaStep1', label:'CTA Final — Étape 1', type:'text'},
+  {key:'finalCtaStep2', label:'CTA Final — Étape 2', type:'text'},
+  {key:'finalCtaStep3', label:'CTA Final — Étape 3', type:'text'},
+  {key:'finalCtaProTip', label:'CTA Final — Conseil Pro', type:'textarea'},
+  {key:'finalCtaUrgency', label:'CTA Final — Urgence', type:'text'},
+  {key:'finalCtaButton', label:'CTA Final — Bouton', type:'text'},
+  {key:'footerPoliciesTitle', label:'Footer — Titre politiques', type:'text'},
+  {key:'footerTerms', label:'Footer — CGV', type:'text'},
+  {key:'footerPrivacy', label:'Footer — Confidentialité', type:'text'},
+  {key:'footerRefund', label:'Footer — Remboursement', type:'text'},
+  {key:'footerShipping', label:'Footer — Livraison', type:'text'},
+  {key:'footerCareTitle', label:'Footer — Titre SAV', type:'text'},
+  {key:'footerAbout', label:'Footer — À Propos', type:'text'},
+  {key:'footerTrack', label:'Footer — Suivi commande', type:'text'},
+  {key:'footerContact', label:'Footer — Contact', type:'text'},
+  {key:'footerContactTitle', label:'Footer — Titre contact', type:'text'},
+  {key:'footerEmail', label:'Footer — Email', type:'text'},
+  {key:'footerCopyright', label:'Footer — Copyright', type:'text'}
+];
+
+var IMAGE_DEFS = [
+  {key:'heroLeft', label:'Image Hero — Gauche'},
+  {key:'heroRight', label:'Image Hero — Droite'},
+  {key:'item1', label:'Image Raison 1'},
+  {key:'item2Left', label:'Image Raison 2 — Gauche'},
+  {key:'item2Right', label:'Image Raison 2 — Droite'},
+  {key:'item3', label:'Image Raison 3'},
+  {key:'productShot', label:'Photo Produit (Section finale)'}
+];
+
+var COLOR_LABELS = {
+  '--bg': 'Fond principal',
+  '--section-bg': 'Fond sections alternées',
+  '--text': 'Texte principal',
+  '--text-muted': 'Texte secondaire',
+  '--accent': 'Couleur accent',
+  '--cta': 'Fond boutons CTA',
+  '--cta-hover': 'Fond boutons (hover)',
+  '--cta-text': 'Texte boutons CTA',
+  '--star': 'Couleur étoiles',
+  '--border': 'Couleur bordures',
+  '--urgency-bg': 'Fond section urgence',
+  '--urgency-border': 'Bordure urgence',
+  '--review-bg': 'Fond cartes avis',
+  '--header-bg': 'Fond header',
+  '--header-border': 'Bordure header',
+  '--badge-bg': 'Fond badge/pills',
+  '--badge-text': 'Texte badge/pills'
+};
+
+// ─── Login / Logout ──────────────────────────────────────
+function doLogin() {
+  var pwd = document.getElementById('login-pwd').value;
+  if (pwd === CFG.adminPassword) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    initAdmin();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+document.getElementById('login-pwd').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-app').style.display = 'none';
+}
+
+// ─── Tab switching ────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.sidebar-item').forEach(function(i) { i.classList.remove('active'); });
+  var panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ─── Init Admin ───────────────────────────────────────────
+function initAdmin() {
+  initSupabaseClient();
+  buildTextFields();
+  buildImageFields();
+  buildColorFields();
+  buildItemToggles();
+  populateStaticFields();
+  loadFromSupabase(function() {
+    loadDashboard();
+  });
+}
+
+function initSupabaseClient() {
+  if (CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase) {
+    supabaseClient = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+  }
+}
+
+// ─── Load from Supabase ──────────────────────────────────
+function loadFromSupabase(cb) {
+  if (!supabaseClient) { if (cb) cb(); return; }
+  supabaseClient.from('funnel_config')
+    .select('config')
+    .eq('funnel_id', CFG.funnelId)
+    .single()
+    .then(function(res) {
+      if (res.data && res.data.config) {
+        CFG = deepMerge(CFG, res.data.config);
+        populateAllFields();
+      }
+      if (cb) cb();
+    })
+    .catch(function() { if (cb) cb(); });
+}
+
+function deepMerge(base, override) {
+  var result = Object.assign({}, base);
+  for (var key in override) {
+    if (override.hasOwnProperty(key)) {
+      if (override[key] && typeof override[key] === 'object' && !Array.isArray(override[key]) &&
+          base[key] && typeof base[key] === 'object') {
+        result[key] = deepMerge(base[key], override[key]);
+      } else if (override[key] !== null && override[key] !== undefined) {
+        result[key] = override[key];
+      }
+    }
+  }
+  return result;
+}
+
+// ─── Populate all fields from CFG ────────────────────────
+function populateAllFields() {
+  // Texts
+  document.querySelectorAll('[data-text-key]').forEach(function(el) {
+    var key = el.getAttribute('data-text-key');
+    if (CFG.texts && CFG.texts[key] !== undefined) el.value = CFG.texts[key];
+  });
+  // Images
+  document.querySelectorAll('[data-image-key]').forEach(function(el) {
+    var key = el.getAttribute('data-image-key');
+    if (CFG.images && CFG.images[key] !== undefined) {
+      el.value = CFG.images[key];
+      updateImagePreview(el);
+    }
+  });
+  // Colors
+  document.querySelectorAll('[data-color-key]').forEach(function(el) {
+    var key = el.getAttribute('data-color-key');
+    if (CFG.colors && CFG.colors[key]) {
+      el.value = CFG.colors[key];
+      var hexEl = document.querySelector('[data-color-hex-for="' + key + '"]');
+      if (hexEl) hexEl.value = CFG.colors[key];
+    }
+  });
+  // Static fields
+  populateStaticFields();
+  // Item toggles
+  buildItemToggles();
+}
+
+function populateStaticFields() {
+  var fields = {
+    'cfg-ctaUrl': CFG.ctaUrl,
+    'cfg-font-headline': CFG.fonts && CFG.fonts.headline,
+    'cfg-font-body': CFG.fonts && CFG.fonts.body,
+    'cfg-metaPixelId': CFG.metaPixelId,
+    'cfg-gaId': CFG.gaId,
+    'cfg-supabaseUrl': CFG.supabaseUrl,
+    'cfg-supabaseAnonKey': CFG.supabaseAnonKey
+  };
+  Object.keys(fields).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && fields[id]) el.value = fields[id];
+  });
+}
+
+// ─── Build Text Fields ───────────────────────────────────
+function buildTextFields() {
+  var container = document.getElementById('textes-fields');
+  var html = '';
+  TEXT_DEFS.forEach(function(def) {
+    var val = (CFG.texts && CFG.texts[def.key]) ? CFG.texts[def.key].replace(/"/g, '&quot;') : '';
+    html += '<div class="field-group">';
+    html += '<label class="field-label">' + def.label + '</label>';
+    if (def.type === 'textarea') {
+      html += '<textarea class="field-input field-textarea" data-text-key="' + def.key + '">' + val + '</textarea>';
+    } else {
+      html += '<input class="field-input" type="text" data-text-key="' + def.key + '" value="' + val + '">';
+    }
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ─── Build Image Fields ──────────────────────────────────
+function buildImageFields() {
+  var container = document.getElementById('images-fields');
+  var html = '';
+  IMAGE_DEFS.forEach(function(def) {
+    var val = (CFG.images && CFG.images[def.key]) ? CFG.images[def.key] : '';
+    html += '<div class="image-field">';
+    html += '<div class="image-field-header">';
+    html += '<div class="image-field-name">' + def.label + '</div>';
+    html += '<img class="image-preview" id="prev-' + def.key + '" src="' + (val || '') + '" style="' + (val ? 'display:block' : '') + '">';
+    html += '</div>';
+    html += '<input class="field-input" type="url" placeholder="https://..." data-image-key="' + def.key + '" value="' + val + '" oninput="updateImagePreview(this)">';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function updateImagePreview(input) {
+  var key = input.getAttribute('data-image-key');
+  var prev = document.getElementById('prev-' + key);
+  if (prev) {
+    if (input.value.trim()) {
+      prev.src = input.value.trim();
+      prev.style.display = 'block';
+    } else {
+      prev.style.display = 'none';
+    }
+  }
+}
+
+// ─── Build Color Fields ──────────────────────────────────
+function buildColorFields() {
+  var container = document.getElementById('color-fields');
+  var html = '';
+  Object.keys(COLOR_LABELS).forEach(function(colorKey) {
+    var val = (CFG.colors && CFG.colors[colorKey]) ? CFG.colors[colorKey] : '#000000';
+    var label = COLOR_LABELS[colorKey];
+    html += '<div class="color-field">';
+    html += '<div class="color-picker-wrap">';
+    html += '<input type="color" data-color-key="' + colorKey + '" value="' + val + '" oninput="syncColorPicker(this)">';
+    html += '</div>';
+    html += '<div class="color-info">';
+    html += '<div class="color-name">' + label + '</div>';
+    html += '<input class="color-hex-input" type="text" data-color-hex-for="' + colorKey + '" value="' + val + '" oninput="syncColorHex(this)">';
+    html += '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function syncColorPicker(picker) {
+  var key = picker.getAttribute('data-color-key');
+  var hexInput = document.querySelector('[data-color-hex-for="' + key + '"]');
+  if (hexInput) hexInput.value = picker.value;
+}
+function syncColorHex(hexInput) {
+  var key = hexInput.getAttribute('data-color-hex-for');
+  var picker = document.querySelector('[data-color-key="' + key + '"]');
+  if (picker && /^#[0-9a-fA-F]{6}$/.test(hexInput.value)) {
+    picker.value = hexInput.value;
+  }
+}
+
+// ─── Build Item Toggles ──────────────────────────────────
+var ITEM_TITLES = {
+  item1: 'Protection de la plaque de croissance',
+  item2: 'Compression médicale sans l\'encombrement',
+  item3: 'Si confortable, votre enfant oublie qu\'il la porte'
+};
+
+function buildItemToggles() {
+  var enabled = CFG.itemsEnabled || {};
+  var html = '';
+  var activeCount = 0;
+  for (var i = 1; i <= ITEM_COUNT; i++) {
+    var key = 'item' + i;
+    var isOn = enabled[key] !== false;
+    if (isOn) activeCount++;
+    var title = (CFG.texts && CFG.texts[key + 'Title']) || ITEM_TITLES[key] || 'Raison ' + i;
+    title = title.replace(/<[^>]*>/g, '').substring(0, 65);
+    html += '<div class="item-card' + (isOn ? '' : ' disabled') + '" id="item-card-' + key + '">';
+    html += '<div class="item-num">' + i + '</div>';
+    html += '<div class="item-info"><div class="item-title-preview">' + title + '</div></div>';
+    html += '<div class="toggle-wrap">';
+    html += '<label class="toggle"><input type="checkbox" data-item-toggle="' + key + '"' + (isOn ? ' checked' : '') + ' onchange="onItemToggle(this)"><span class="toggle-slider"></span></label>';
+    html += '<span class="toggle-label" id="toggle-lbl-' + key + '">' + (isOn ? 'ON' : 'OFF') + '</span>';
+    html += '</div></div>';
+  }
+  document.getElementById('items-cards').innerHTML = html;
+  updateItemsCountLabel();
+}
+
+function onItemToggle(checkbox) {
+  var key = checkbox.getAttribute('data-item-toggle');
+  var card = document.getElementById('item-card-' + key);
+  var lbl = document.getElementById('toggle-lbl-' + key);
+  if (checkbox.checked) {
+    card.classList.remove('disabled');
+    lbl.textContent = 'ON';
+  } else {
+    card.classList.add('disabled');
+    lbl.textContent = 'OFF';
+  }
+  updateItemsCountLabel();
+}
+
+function updateItemsCountLabel() {
+  var count = document.querySelectorAll('[data-item-toggle]:checked').length;
+  var lbl = document.getElementById('items-count-label');
+  if (lbl) lbl.textContent = count + ' / ' + ITEM_COUNT + ' actifs';
+}
+
+function toggleAllItems(state) {
+  document.querySelectorAll('[data-item-toggle]').forEach(function(cb) {
+    cb.checked = state;
+    onItemToggle(cb);
+  });
+}
+
+// ─── Collect config ───────────────────────────────────────
+function collectConfig() {
+  var cfg = { colors: {}, images: {}, texts: {}, itemsEnabled: {} };
+
+  // Colors (hex inputs are the source of truth)
+  document.querySelectorAll('[data-color-hex-for]').forEach(function(el) {
+    cfg.colors[el.getAttribute('data-color-hex-for')] = el.value.trim() || '#000000';
+  });
+
+  // Images
+  document.querySelectorAll('[data-image-key]').forEach(function(el) {
+    cfg.images[el.getAttribute('data-image-key')] = el.value.trim();
+  });
+
+  // Texts
+  document.querySelectorAll('[data-text-key]').forEach(function(el) {
+    cfg.texts[el.getAttribute('data-text-key')] = el.value;
+  });
+
+  // Item toggles
+  document.querySelectorAll('[data-item-toggle]').forEach(function(el) {
+    cfg.itemsEnabled[el.getAttribute('data-item-toggle')] = el.checked;
+  });
+
+  // Static fields
+  cfg.ctaUrl = document.getElementById('cfg-ctaUrl').value.trim();
+  cfg.fonts = {
+    headline: document.getElementById('cfg-font-headline').value.trim() || 'Inter',
+    body: document.getElementById('cfg-font-body').value.trim() || 'Inter'
+  };
+  cfg.metaPixelId = document.getElementById('cfg-metaPixelId').value.trim();
+  cfg.gaId = document.getElementById('cfg-gaId').value.trim();
+  cfg.supabaseUrl = document.getElementById('cfg-supabaseUrl').value.trim();
+  cfg.supabaseAnonKey = document.getElementById('cfg-supabaseAnonKey').value.trim();
+
+  var newPwd = document.getElementById('cfg-adminPassword').value;
+  cfg.adminPassword = newPwd || CFG.adminPassword;
+
+  cfg.funnelId = CFG.funnelId;
+
+  return cfg;
+}
+
+// ─── Save config ─────────────────────────────────────────
+function saveConfig() {
+  var btn = document.getElementById('save-btn');
+  var status = document.getElementById('save-status');
+
+  if (!supabaseClient) {
+    // Reinit with possibly updated keys
+    var newUrl = document.getElementById('cfg-supabaseUrl').value.trim();
+    var newKey = document.getElementById('cfg-supabaseAnonKey').value.trim();
+    if (newUrl && newKey && window.supabase) {
+      supabaseClient = window.supabase.createClient(newUrl, newKey);
+    }
+  }
+
+  if (!supabaseClient) {
+    status.textContent = '⚠️ Supabase non configuré — renseignez URL et Anon Key dans Réglages';
+    status.className = 'save-status error';
+    return;
+  }
+
+  var cfg = collectConfig();
+  CFG = deepMerge(CFG, cfg);
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sauvegarde…';
+  status.textContent = '';
+  status.className = 'save-status';
+
+  supabaseClient.from('funnel_config')
+    .update({ config: cfg, updated_at: new Date().toISOString() })
+    .eq('funnel_id', cfg.funnelId)
+    .select()
+    .then(function(res) {
+      if (res.data && res.data.length > 0) {
+        showSaveSuccess(btn, status);
+      } else {
+        // Pas de ligne existante — upsert
+        supabaseClient.from('funnel_config')
+          .upsert({ funnel_id: cfg.funnelId, config: cfg, updated_at: new Date().toISOString() })
+          .select()
+          .then(function() { showSaveSuccess(btn, status); })
+          .catch(function(e) { showSaveError(btn, status, e); });
+      }
+    })
+    .catch(function(e) { showSaveError(btn, status, e); });
+}
+
+function showSaveSuccess(btn, status) {
+  btn.disabled = false;
+  btn.innerHTML = '💾 Sauvegarder';
+  status.textContent = '✅ Sauvegardé avec succès';
+  status.className = 'save-status success';
+  setTimeout(function() {
+    status.textContent = 'Modifications sauvegardées';
+    status.className = 'save-status';
+  }, 3000);
+}
+
+function showSaveError(btn, status, e) {
+  btn.disabled = false;
+  btn.innerHTML = '💾 Sauvegarder';
+  status.textContent = '❌ Erreur : ' + (e.message || JSON.stringify(e));
+  status.className = 'save-status error';
+}
+
+// ─── Dashboard ────────────────────────────────────────────
+function setDateFilter(mode, el) {
+  currentDateFilter = mode;
+  document.querySelectorAll('.date-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  var cr = document.getElementById('custom-range');
+  if (mode === 'custom') {
+    cr.style.display = 'flex';
+  } else {
+    cr.style.display = 'none';
+    loadDashboard();
+  }
+}
+
+function applyCustomRange() {
+  customFrom = document.getElementById('date-from').value;
+  customTo = document.getElementById('date-to').value;
+  if (customFrom && customTo) loadDashboard();
+}
+
+function getDateRange() {
+  var now = new Date();
+  var from, to = now.toISOString();
+  if (currentDateFilter === 'today') {
+    var start = new Date(now); start.setHours(0,0,0,0);
+    from = start.toISOString();
+  } else if (currentDateFilter === '7d') {
+    var d = new Date(now); d.setDate(d.getDate() - 7);
+    from = d.toISOString();
+  } else if (currentDateFilter === '30d') {
+    var d2 = new Date(now); d2.setDate(d2.getDate() - 30);
+    from = d2.toISOString();
+  } else if (currentDateFilter === 'custom' && customFrom && customTo) {
+    from = new Date(customFrom).toISOString();
+    to = new Date(customTo + 'T23:59:59').toISOString();
+  } else {
+    var d3 = new Date(now); d3.setDate(d3.getDate() - 7);
+    from = d3.toISOString();
+  }
+  return { from: from, to: to };
+}
+
+function loadDashboard() {
+  if (!supabaseClient) {
+    document.getElementById('kpi-visitors').textContent = '—';
+    document.getElementById('kpi-cvr').textContent = '—';
+    document.getElementById('kpi-scroll').textContent = '—';
+    document.getElementById('kpi-cta-clicks').textContent = '—';
+    document.getElementById('funnel-bars').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px 0;">Configurez Supabase dans Réglages pour voir les analytics.</div>';
+    document.getElementById('hourly-chart').innerHTML = '<div style="color:var(--muted);font-size:13px;">Pas de données — configurez Supabase.</div>';
+    return;
+  }
+
+  var range = getDateRange();
+
+  supabaseClient.from('funnel_events')
+    .select('event_type, event_data, created_at, visitor_id')
+    .eq('funnel_id', CFG.funnelId)
+    .gte('created_at', range.from)
+    .lte('created_at', range.to)
+    .then(function(res) {
+      if (res.error || !res.data) return;
+      renderDashboard(res.data);
+    })
+    .catch(function(){});
+}
+
+function renderDashboard(events) {
+  var pageViews = events.filter(function(e) { return e.event_type === 'page_view'; });
+  var scroll25 = events.filter(function(e) { return e.event_type === 'scroll_25'; });
+  var scroll50 = events.filter(function(e) { return e.event_type === 'scroll_50'; });
+  var ctaClicks = events.filter(function(e) { return e.event_type === 'cta_click'; });
+
+  var visitors = pageViews.length;
+  var cvr = visitors > 0 ? ((ctaClicks.length / visitors) * 100).toFixed(1) : '0.0';
+
+  // Average scroll depth
+  var scrollPoints = { 25: scroll25.length, 50: scroll50.length, 75: events.filter(function(e){return e.event_type==='scroll_75';}).length, 100: events.filter(function(e){return e.event_type==='scroll_100';}).length };
+  var avgScroll = 0;
+  if (visitors > 0) {
+    avgScroll = Math.round(((scrollPoints[25]*25 + scrollPoints[50]*50 + scrollPoints[75]*75 + scrollPoints[100]*100) / (visitors * 4)));
+  }
+
+  document.getElementById('kpi-visitors').textContent = visitors.toLocaleString('fr-FR');
+  document.getElementById('kpi-cvr').textContent = cvr + '%';
+  document.getElementById('kpi-scroll').textContent = avgScroll + '%';
+  document.getElementById('kpi-cta-clicks').textContent = ctaClicks.length.toLocaleString('fr-FR');
+
+  // Funnel bars
+  var levels = [
+    { name: 'Niveau 1 — Page vue', count: visitors },
+    { name: 'Niveau 2 — Scroll 25%', count: scroll25.length },
+    { name: 'Niveau 3 — Scroll 50%', count: scroll50.length },
+    { name: 'Niveau 4 — Clic CTA', count: ctaClicks.length }
+  ];
+  var base = levels[0].count || 1;
+  var funnelHtml = '';
+  levels.forEach(function(lvl, idx) {
+    var pct = Math.round((lvl.count / base) * 100);
+    var dropoff = idx > 0 && levels[idx-1].count > 0 ? Math.round((1 - lvl.count / levels[idx-1].count) * 100) : 0;
+    var opacity = 1 - idx * 0.18;
+    funnelHtml += '<div class="funnel-bar-row">';
+    funnelHtml += '<div class="funnel-bar-label"><span class="funnel-bar-name">' + lvl.name + '</span><span class="funnel-bar-stats">' + lvl.count.toLocaleString('fr-FR') + ' visiteurs</span></div>';
+    funnelHtml += '<div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:' + pct + '%;opacity:' + opacity + ';"></div></div>';
+    if (idx > 0) funnelHtml += '<div class="funnel-bar-dropoff">−' + dropoff + '% vs étape précédente</div>';
+    funnelHtml += '</div>';
+  });
+  document.getElementById('funnel-bars').innerHTML = funnelHtml;
+
+  // Hourly chart
+  var hourCounts = new Array(24).fill(0);
+  pageViews.forEach(function(e) {
+    var h = new Date(e.created_at).getHours();
+    hourCounts[h]++;
+  });
+  var maxH = Math.max.apply(null, hourCounts) || 1;
+  var chartHtml = '<div class="hourly-bars">';
+  for (var h = 0; h < 24; h++) {
+    var barH = Math.round((hourCounts[h] / maxH) * 90);
+    chartHtml += '<div class="hour-bar-wrap">';
+    chartHtml += '<div class="hour-bar" style="height:' + barH + 'px;" title="' + h + 'h: ' + hourCounts[h] + '"></div>';
+    if (h % 4 === 0) chartHtml += '<div class="hour-label">' + h + 'h</div>';
+    else chartHtml += '<div class="hour-label"></div>';
+    chartHtml += '</div>';
+  }
+  chartHtml += '</div>';
+  document.getElementById('hourly-chart').innerHTML = chartHtml;
+}
+
+// Mark unsaved on any input change
+document.addEventListener('input', function(e) {
+  if (e.target.closest('#admin-app') && !e.target.closest('#login-screen')) {
+    var status = document.getElementById('save-status');
+    if (status) {
+      status.textContent = 'Modifications non sauvegardées';
+      status.className = 'save-status';
+    }
+  }
+});
+</script>
+</body>
+</html>
