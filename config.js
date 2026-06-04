@@ -7,7 +7,7 @@ window.FUNNEL_CONFIG = {
   metaPixelId: '',
   gaId: '',
 
-  ctaUrl: 'https://davelto.com/products/recosever?view=flexoryn-cheville',
+  ctaUrl: 'https://flexoryn.com/products/severx',
 
   colors: {
     '--bg': '#FFFFFF',
